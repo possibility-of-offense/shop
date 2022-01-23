@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "shop-30ed0",
+    "staging": "shop-stage-aa5b1"
+  },
+  "targets": {}
+}

@@ -1,0 +1,21 @@
+// app global css in SCSS form
+.container-max {
+  max-width: 1250px;
+  margin: 0 auto;
+}
+.container-max__gridify {
+  max-width: 1250px;
+  margin: 0 auto;
+  display: grid;
+  grid-gap: 1em;
+
+  @media (min-width: 1024px) {
+    & {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.remove-bottom-padding {
+  padding-bottom: 0 !important;
+}
