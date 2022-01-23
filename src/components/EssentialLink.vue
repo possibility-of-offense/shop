@@ -1,7 +1,20 @@
 <template>
+  <q-item
+    clickable
+    to="/admin-dashboard"
+    v-if="user && user.uid === 'xhl8kAFG3wPttsaRWh92qCIGDHQ2'"
+  >
+    <q-item-section avatar>
+      <q-icon name="admin_panel_settings" />
+    </q-item-section>
+
+    <q-item-section>
+      <q-item-label>Admin Dashboard</q-item-label>
+    </q-item-section>
+  </q-item>
   <q-item clickable to="/">
     <q-item-section avatar>
-      <q-icon name="school" />
+      <q-icon name="home" />
     </q-item-section>
 
     <q-item-section>
@@ -48,6 +61,7 @@ export default defineComponent({
 
     return {
       isUser,
+      user,
     };
   },
 });

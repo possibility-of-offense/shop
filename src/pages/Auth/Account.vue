@@ -34,7 +34,7 @@
               required: true,
               label: 'Price',
               align: 'left',
-              field: (row) => row.price,
+              field: (row) => row.price + '$',
               format: (val) => `${val}`,
               sortable: false,
             },
@@ -57,7 +57,22 @@
               sortable: false,
             },
           ]"
-        />
+        >
+          <template v-slot:body-cell-id="props">
+            <q-td :props="props">
+              <router-link
+                :to="{ name: 'SingleProduct', params: { id: props.value } }"
+              >
+                <q-badge :label="props.value" />
+              </router-link>
+            </q-td>
+          </template>
+          <template v-slot:body-cell="props">
+            <q-td :props="props">
+              <q-badge color="blue" :label="props.value" />
+            </q-td>
+          </template>
+        </q-table>
       </div>
       <div v-else>
         <q-skeleton v-if="isLoading" height="350px" />
@@ -114,22 +129,24 @@ export default defineComponent({
         documents.docs.forEach((d) => {
           if (d.exists()) {
             const entr = Object.values(d.data());
-            let empt = {};
+
+            console.log(entr);
+
+            // let empt = {};
             entr.forEach((el) => {
               const buyingDate = new Date(el.created.seconds * 1000);
 
               if (el.name) {
-                empt = {
+                const empt = {
                   ...el,
                   name: el.name,
                   created: `${
                     buyingDate.getMonth() + 1
                   }/${buyingDate.getDate()}/${buyingDate.getFullYear()} - ${buyingDate.getHours()}:${buyingDate.getMinutes()}`,
                 };
+                orders.value.push(empt);
               }
             });
-
-            orders.value.push(empt);
           }
         });
       } catch (err) {

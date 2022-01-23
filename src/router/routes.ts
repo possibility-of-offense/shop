@@ -1,4 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
+import getUser from "src/composables/getUser";
+
+const { user } = getUser();
 
 const routes: RouteRecordRaw[] = [
   {
@@ -38,6 +41,26 @@ const routes: RouteRecordRaw[] = [
         path: "",
         name: "Account",
         component: () => import("pages/Auth/Account.vue"),
+      },
+    ],
+  },
+  {
+    path: "/admin-dashboard",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "Account",
+        component: () => import("pages/Auth/AdminDashboard.vue"),
+        beforeEnter(to, from) {
+          if (user.value.uid === "xhl8kAFG3wPttsaRWh92qCIGDHQ2") {
+            return true;
+          } else {
+            return {
+              path: "/",
+            };
+          }
+        },
       },
     ],
   },
