@@ -241,6 +241,9 @@ export default defineComponent({
             ...documentsTimestamp,
           }
         );
+        await addDoc(collection(db, "orders"), {
+          ...documentsTimestamp,
+        });
         handleClearCart(false);
         router.push("/");
       } catch (err) {
