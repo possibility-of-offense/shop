@@ -122,6 +122,7 @@ export default defineComponent({
             icon: "cloud_done",
             message: "Added to the cart",
           });
+          // TODO add some local state
           $store.dispatch("cart/setCartContents", document.value);
         }
       } catch (err) {
