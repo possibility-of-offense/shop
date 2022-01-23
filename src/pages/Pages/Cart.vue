@@ -91,7 +91,13 @@ import { useStore } from "src/store";
 import { useRouter } from "vue-router";
 
 // Firestore imports
-import { addDoc, collection, doc, runTransaction } from "@firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  runTransaction,
+  serverTimestamp,
+} from "@firebase/firestore";
 import { db } from "src/boot/init";
 
 // Auth imports
@@ -222,10 +228,17 @@ export default defineComponent({
           );
         });
 
+        // Create timestamp on the documents
+        const documentsTimestamp = documents.value.map((document) => {
+          return {
+            created: serverTimestamp(),
+            ...document,
+          };
+        });
         const d = await addDoc(
           collection(db, "users", user.value.uid, "bought_products"),
           {
-            ...documents.value,
+            ...documentsTimestamp,
           }
         );
         handleClearCart(false);

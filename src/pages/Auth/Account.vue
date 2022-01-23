@@ -47,6 +47,15 @@
               format: (val) => `${val}`,
               sortable: false,
             },
+            {
+              name: 'created',
+              required: true,
+              label: 'Created On:',
+              align: 'left',
+              field: (row) => row.created,
+              format: (val) => `${val}`,
+              sortable: false,
+            },
           ]"
         />
       </div>
@@ -107,10 +116,19 @@ export default defineComponent({
             const entr = Object.values(d.data());
             let empt = {};
             entr.forEach((el) => {
+              const buyingDate = new Date(el.created.seconds * 1000);
+
               if (el.name) {
-                empt = { name: el.name, ...el };
+                empt = {
+                  ...el,
+                  name: el.name,
+                  created: `${
+                    buyingDate.getMonth() + 1
+                  }/${buyingDate.getDate()}/${buyingDate.getFullYear()} - ${buyingDate.getHours()}:${buyingDate.getMinutes()}`,
+                };
               }
             });
+
             orders.value.push(empt);
           }
         });
