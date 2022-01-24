@@ -39,3 +39,7 @@ export interface CartProductsTotalIndexed {
     cartItems: number;
   };
 }
+export interface ServerTimeStampProperties {
+  seconds: number;
+  nanoseconds: number;
+}
