@@ -50,15 +50,21 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: "",
-        name: "Account",
+        name: "AdminDashboard",
         component: () => import("pages/Auth/AdminDashboard.vue"),
         beforeEnter(to, from) {
-          if (user.value.uid === "xhl8kAFG3wPttsaRWh92qCIGDHQ2") {
-            return true;
-          } else {
+          if (
+            user.value === null ||
+            (user.value && user.value.uid !== "xhl8kAFG3wPttsaRWh92qCIGDHQ2")
+          ) {
             return {
               path: "/",
             };
+          } else if (
+            user.value &&
+            user.value.uid === "xhl8kAFG3wPttsaRWh92qCIGDHQ2"
+          ) {
+            return true;
           }
         },
       },
