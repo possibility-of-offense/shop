@@ -1,40 +1,49 @@
 <template>
   <div>
     <q-page padding>
-      <h4 class="q-ma-none">Hello Admin</h4>
+      <h4 class="q-ma-none">Hello {{ user.displayName }}</h4>
       <Separator :many="2"></Separator>
 
+      <p class="q-ma-none font-weight-bold">Orders:</p>
       <q-list v-if="documents.length">
         <q-item
-          :to="{ name: '' }"
+          dense
           v-for="(document, index) in documents"
           :key="index"
+          class="q-pa-none cursor-pointer"
         >
-          <q-list
-            bordered
-            v-for="doc in document"
+          <q-item-section
+            v-for="doc in document.products"
             :key="doc.id"
-            class="row justify-between q-pa-md order-hover"
+            class="row justify-between q-pa-md order-hover order-border"
             :class="[
-              Object.values(document).length === 1
+              Object.values(document.products).length === 1
                 ? 'col-12'
-                : `col-${12 / Object.values(document).length}`,
+                : `col-${12 / Object.values(document.products).length}`,
             ]"
           >
-            <q-item-section>
-              <q-item-label>{{ doc.name }}</q-item-label>
-              <q-item-label caption lines="2"
-                >Price: {{ doc.price }}$</q-item-label
-              >
-              <q-item-label caption>
-                Quantity: {{ doc.quantity }}
-              </q-item-label>
-            </q-item-section>
+            <router-link
+              class="order-remove-link-styling"
+              :to="{ name: 'SingleProduct', params: { id: doc.id } }"
+            >
+              <q-item-section>
+                <q-item-label>{{ doc.name }}</q-item-label>
+                <q-item-label caption lines="2"
+                  >Price: {{ doc.price }}$</q-item-label
+                >
+                <q-item-label caption>
+                  Quantity: {{ doc.quantity }}
+                </q-item-label>
+              </q-item-section>
 
-            <q-item-section side top>
-              <q-item-label caption>{{ formatTime(doc.created) }}</q-item-label>
-            </q-item-section>
-          </q-list>
+              <q-item-section side top>
+                <q-item-label caption
+                  >{{ formatTime(document.created) }}
+                  <p v-if="document.user">{{ document.user }}</p>
+                </q-item-label>
+              </q-item-section>
+            </router-link>
+          </q-item-section>
         </q-item>
       </q-list>
     </q-page>
@@ -52,15 +61,13 @@ import getUser from "src/composables/getUser";
 import Separator from "src/components/General/Separator.vue";
 
 // Firestore imports
-import { collection, onSnapshot, query } from "@firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "@firebase/firestore";
 import { db } from "src/boot/init";
 
 // Interfaces imports
 import { ServerTimeStampProperties } from "src/components/models";
 
 function formatTime(el: ServerTimeStampProperties): string | null | void {
-  console.log(el);
-
   const buyingDate = new Date(el.seconds * 1000);
   return `${
     buyingDate.getMonth() + 1
@@ -79,8 +86,9 @@ export default defineComponent({
     // TODO fix type
     const documents = vueRef<Array<any>>([]);
     const getDocuments = async () => {
+      const col = collection(db, "orders");
       try {
-        const unsub = onSnapshot(query(collection(db, "orders")), (snap) => {
+        const unsub = onSnapshot(query(col, orderBy("created")), (snap) => {
           snap.docs.forEach((d: any) => {
             if (d.exists()) {
               documents.value = [...documents.value, d.data()];
@@ -111,6 +119,20 @@ export default defineComponent({
   transition: background-color 0.3s ease-in-out;
   &:hover {
     background-color: rgba($primary, 0.4);
+  }
+}
+.order-border {
+  border: 1px solid #ddd;
+  margin: 0 !important;
+}
+.order-remove-link-styling {
+  text-decoration: none;
+  color: inherit;
+  @media (min-width: 1024px) {
+    & {
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }
 </style>

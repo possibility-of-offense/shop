@@ -98,7 +98,7 @@ import {
   runTransaction,
   serverTimestamp,
 } from "@firebase/firestore";
-import { db } from "src/boot/init";
+import { auth, db } from "src/boot/init";
 
 // Auth imports
 import getUser from "src/composables/getUser";
@@ -229,12 +229,19 @@ export default defineComponent({
         });
 
         // Create timestamp on the documents
-        const documentsTimestamp = documents.value.map((document) => {
+        const documentsTimestamp = documents.value.map((d) => {
           return {
             created: serverTimestamp(),
-            ...document,
+            ...d,
           };
         });
+        const documentTimestampClone = [...documentsTimestamp];
+        const documentsWithourTimestamp = documentTimestampClone.map((el) => {
+          const newEl = { ...el };
+          delete newEl["created"];
+          return newEl;
+        });
+
         const d = await addDoc(
           collection(db, "users", user.value.uid, "bought_products"),
           {
@@ -242,8 +249,11 @@ export default defineComponent({
           }
         );
         await addDoc(collection(db, "orders"), {
-          ...documentsTimestamp,
+          products: documentsWithourTimestamp,
+          created: serverTimestamp(),
+          user: user.value.displayName,
         });
+
         handleClearCart(false);
         router.push("/");
       } catch (err) {

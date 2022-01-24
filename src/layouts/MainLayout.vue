@@ -36,15 +36,28 @@
           :to="{ name: 'Signin' }"
         />
 
-        <p class="q-ma-none q-ml-auto" v-if="currentUser">
-          Hello {{ currentUser }}
-        </p>
+        <div class="q-ml-auto row items-center">
+          <p class="q-ma-none" v-if="currentUser">Hello {{ currentUser }}</p>
+          <template v-if="user && user.uid === 'xhl8kAFG3wPttsaRWh92qCIGDHQ2'">
+            &nbsp; &nbsp;
+            <q-btn
+              color="yellow"
+              text-color="black"
+              clickable
+              to="/admin-dashboard"
+            >
+              <q-item-section>
+                <q-item-label>Admin Dashboard</q-item-label>
+              </q-item-section>
+            </q-btn>
+          </template>
+        </div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> Links </q-item-label>
 
         <EssentialLink />
       </q-list>
