@@ -202,6 +202,7 @@ export default defineComponent({
 
     // LOGIC buy products
     const handleBuy = async () => {
+      let newQuantity: any;
       try {
         await runTransaction(db, async (transaction) => {
           return Promise.all(
@@ -215,8 +216,7 @@ export default defineComponent({
                 throw "No quantity";
               }
 
-              const newQuantity =
-                documentSnap.data().quantity - el.cartItems * 1;
+              newQuantity = documentSnap.data().quantity - el.cartItems * 1;
 
               // https://stackoverflow.com/questions/47949573/firestore-transaction-implementing-multiple-gets
 
@@ -239,6 +239,7 @@ export default defineComponent({
         const documentsWithourTimestamp = documentTimestampClone.map((el) => {
           const newEl = { ...el };
           delete newEl["created"];
+          delete newEl["quantity"];
           return newEl;
         });
 

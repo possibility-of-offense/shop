@@ -1,10 +1,11 @@
 <template>
   <div>
     <q-page padding>
-      <h4 class="q-ma-none">Hello {{ user.displayName }}</h4>
+      <h6 class="q-ma-none">
+        Hello {{ user.displayName }}! Here are the orders:
+      </h6>
       <Separator :many="2"></Separator>
 
-      <p class="q-ma-none font-weight-bold">Orders:</p>
       <q-list v-if="documents.length">
         <q-item
           dense
@@ -32,7 +33,7 @@
                   >Price: {{ doc.price }}$</q-item-label
                 >
                 <q-item-label caption>
-                  Quantity: {{ doc.quantity }}
+                  Quantity: {{ doc.cartItems }}
                 </q-item-label>
               </q-item-section>
 
@@ -88,13 +89,16 @@ export default defineComponent({
     const getDocuments = async () => {
       const col = collection(db, "orders");
       try {
-        const unsub = onSnapshot(query(col, orderBy("created")), (snap) => {
-          snap.docs.forEach((d: any) => {
-            if (d.exists()) {
-              documents.value = [...documents.value, d.data()];
-            }
-          });
-        });
+        const unsub = onSnapshot(
+          query(col, orderBy("created", "desc")),
+          (snap) => {
+            snap.docs.forEach((d: any) => {
+              if (d.exists()) {
+                documents.value = [...documents.value, d.data()];
+              }
+            });
+          }
+        );
 
         watchEffect((onInvalidate) => {
           onInvalidate(() => unsub());
