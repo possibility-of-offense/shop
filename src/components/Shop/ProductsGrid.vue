@@ -1,9 +1,16 @@
 <template>
   <div class="text-center container-max__gridify">
     <div v-for="doc in documents" :key="doc.id">
-      <q-card class="my-card">
+      <q-card
+        class="my-card"
+        :class="[doc.data.quantity === 0 ? 'no-stock-card ' : '']"
+      >
         <img
-          src="https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80"
+          :src="
+            doc.data.imgSrc
+              ? doc.data.imgSrc
+              : 'https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
+          "
         />
 
         <q-card-section class="remove-bottom-padding">
@@ -24,7 +31,10 @@
           <q-btn
             :to="{ name: 'SingleProduct', params: { id: doc.id } }"
             color="primary"
-            label="See the product"
+            :label="doc.data.quantity ? `See the product` : 'Out of stock'"
+            :class="[doc.data.quantity ? '' : 'cursor-not-allowed	']"
+            :disable="doc.data.quantity ? false : true"
+            class="see-product"
           />
         </q-card-actions>
       </q-card>

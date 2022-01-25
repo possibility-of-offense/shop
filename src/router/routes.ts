@@ -67,6 +67,13 @@ const routes: RouteRecordRaw[] = [
             return true;
           }
         },
+        children: [
+          {
+            path: "add",
+            name: "AdminDashboardAdd",
+            component: () => import("pages/Auth/AdminDashboardAdd.vue"),
+          },
+        ],
       },
     ],
   },

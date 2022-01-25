@@ -6,6 +6,7 @@ export interface SimpleProduct {
     salePrice?: number;
     image?: string;
     quantity?: number;
+    imgSrc?: string | null;
   };
 }
 
