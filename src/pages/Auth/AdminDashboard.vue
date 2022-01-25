@@ -1,52 +1,111 @@
 <template>
   <div>
-    <q-page padding>
-      <h6 class="q-ma-none">
-        Hello {{ user.displayName }}! Here are the orders:
-      </h6>
-      <Separator :many="2"></Separator>
-
-      <q-list v-if="documents.length">
-        <q-item
-          dense
-          v-for="(document, index) in documents"
-          :key="index"
-          class="q-pa-none cursor-pointer"
-        >
-          <q-item-section
-            v-for="doc in document.products"
-            :key="doc.id"
-            class="row justify-between q-pa-md order-hover order-border"
-            :class="[
-              Object.values(document.products).length === 1
-                ? 'col-12'
-                : `col-${12 / Object.values(document.products).length}`,
-            ]"
+    <q-page class="bg-grey-4">
+      <div class="row">
+        <div class="col-md-2">
+          <q-scroll-area
+            :thumb-style="thumbStyle"
+            :content-style="contentStyle"
+            :content-active-style="contentActiveStyle"
+            style="height: 100vh; max-width: 90%"
           >
-            <router-link
-              class="order-remove-link-styling"
-              :to="{ name: 'SingleProduct', params: { id: doc.id } }"
-            >
-              <q-item-section>
-                <q-item-label>{{ doc.name }}</q-item-label>
-                <q-item-label caption lines="2"
-                  >Price: {{ doc.price }}$</q-item-label
-                >
-                <q-item-label caption>
-                  Quantity: {{ doc.cartItems }}
-                </q-item-label>
-              </q-item-section>
+            <q-list padding class="rounded-borders text-primary">
+              <q-item
+                clickable
+                v-ripple
+                :active="link === 'outbox'"
+                @click="link = 'outbox'"
+                active-class="my-menu-link"
+                :to="{ name: 'AdminDashboard' }"
+              >
+                <q-item-section avatar>
+                  <q-icon name="checklist" />
+                </q-item-section>
 
-              <q-item-section side top>
-                <q-item-label caption
-                  >{{ formatTime(document.created) }}
-                  <p v-if="document.user">{{ document.user }}</p>
-                </q-item-label>
+                <q-item-section>Check orders</q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                v-ripple
+                :active="link === 'outbox'"
+                @click="link = 'outbox'"
+                active-class="my-menu-link"
+                :to="{ name: 'AdminDashboardAdd' }"
+              >
+                <q-item-section avatar>
+                  <q-icon name="add" />
+                </q-item-section>
+
+                <q-item-section>Add product</q-item-section>
+              </q-item>
+
+              <q-separator spaced />
+
+              <q-item
+                clickable
+                v-ripple
+                :active="link === 'settings'"
+                @click="link = 'settings'"
+                active-class="my-menu-link"
+              >
+                <q-item-section avatar>
+                  <q-icon name="settings" />
+                </q-item-section>
+
+                <q-item-section>Settings</q-item-section>
+              </q-item>
+            </q-list>
+          </q-scroll-area>
+        </div>
+        <div class="col md-8 q-ma-lg q-pa-lg bg-white shadow-2">
+          <router-view />
+          <h6 class="q-ma-none">
+            Hello {{ user.displayName }}! Here are the orders:
+          </h6>
+          <Separator></Separator>
+          <q-list v-if="documents.length">
+            <q-item
+              dense
+              v-for="(document, index) in documents"
+              :key="index"
+              class="q-pa-none cursor-pointer"
+            >
+              <q-item-section
+                v-for="doc in document.products"
+                :key="doc.id"
+                class="row justify-between q-pa-sm order-hover order-border"
+                :class="[
+                  Object.values(document.products).length === 1
+                    ? 'col-12'
+                    : `col-${12 / Object.values(document.products).length}`,
+                ]"
+              >
+                <router-link
+                  class="order-remove-link-styling"
+                  :to="{ name: 'SingleProduct', params: { id: doc.id } }"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ doc.name }}</q-item-label>
+                    <q-item-label caption lines="2"
+                      >Price: {{ doc.price }}$</q-item-label
+                    >
+                    <q-item-label caption>
+                      Quantity: {{ doc.cartItems }}
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section side top>
+                    <q-item-label caption
+                      >{{ formatTime(document.created) }}
+                      <p v-if="document.user">{{ document.user }}</p>
+                    </q-item-label>
+                  </q-item-section>
+                </router-link>
               </q-item-section>
-            </router-link>
-          </q-item-section>
-        </q-item>
-      </q-list>
+            </q-item>
+          </q-list>
+        </div>
+      </div>
     </q-page>
   </div>
 </template>
@@ -80,7 +139,7 @@ export default defineComponent({
   components: {
     Separator,
   },
-  setup() {
+  setup(_, context) {
     const { user } = getUser();
 
     // Get orders
@@ -113,7 +172,31 @@ export default defineComponent({
       user,
       documents,
       formatTime,
+      // Quasar components props
+      contentStyle: {
+        backgroundColor: "#fff",
+        color: "#555",
+      },
+
+      contentActiveStyle: {
+        backgroundColor: "#eee",
+        color: "black",
+      },
+
+      thumbStyle: {
+        right: "2px",
+        borderRadius: "5px",
+        backgroundColor: "#027be3",
+        width: "5px",
+        opacity: 0.75,
+      },
+      link: vueRef("inbox"),
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.$emit("closeDrawer", true);
+    });
   },
 });
 </script>

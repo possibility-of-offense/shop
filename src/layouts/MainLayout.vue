@@ -64,7 +64,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view @close-drawer="handleClosing" />
     </q-page-container>
   </q-layout>
 </template>
@@ -125,6 +125,14 @@ export default defineComponent({
       });
     };
 
+    const handleClosing = (val: boolean) => {
+      if (val) {
+        leftDrawerOpen.value = false;
+      } else {
+        leftDrawerOpen.value = true;
+      }
+    };
+
     return {
       leftDrawerOpen,
       // LOGIC Toggle the drawer
@@ -135,6 +143,7 @@ export default defineComponent({
       currentUser,
       logout,
       error,
+      handleClosing,
     };
   },
 });
