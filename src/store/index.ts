@@ -8,6 +8,7 @@ import {
 
 import cart from "./cart";
 import user from "./user";
+import products from "./products";
 // import { ExampleStateInterface } from './module-example/state';
 
 /*
@@ -24,6 +25,7 @@ export interface StateInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   example: unknown;
+  products: any;
 }
 
 // provide typings for `this.$store`
@@ -42,6 +44,7 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       cart,
       user,
+      products,
     },
 
     // enable strict mode (adds overhead!)

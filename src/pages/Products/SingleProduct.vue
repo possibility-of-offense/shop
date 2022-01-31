@@ -13,9 +13,10 @@
     <div class="row" v-if="document">
       <div class="col-md-6">
         <q-card class="my-card">
-          <img
+          <!-- <img
             src="https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80"
-          />
+          /> -->
+          <q-img :src="document.data.imgSrc" />
         </q-card>
       </div>
       <div class="col-md-6">
@@ -81,6 +82,7 @@ export default defineComponent({
               name: docSnap.data().name,
               price: docSnap.data().price,
               quantity: docSnap.data().quantity,
+              imgSrc: docSnap.data().url,
             },
           };
 

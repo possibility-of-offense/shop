@@ -64,7 +64,7 @@ export default defineComponent({
               price: doc.data().price,
               salePrice: doc.data().salePrice ? doc.data().salePrice : null,
               quantity: doc.data().quantity,
-              imgSrc: doc.data().imgSrc ? doc.data().imgSrc : null,
+              imgSrc: doc.data().url ? doc.data().url : null,
             },
           };
 

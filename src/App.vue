@@ -2,9 +2,13 @@
   <router-view />
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+// Vue imports
+import { defineComponent, ref as vueRef } from "vue";
 
 export default defineComponent({
-  name: 'App'
-})
+  name: "App",
+  setup() {
+    return {};
+  },
+});
 </script>

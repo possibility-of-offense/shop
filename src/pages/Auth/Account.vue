@@ -130,8 +130,6 @@ export default defineComponent({
           if (d.exists()) {
             const entr = Object.values(d.data());
 
-            console.log(entr);
-
             // let empt = {};
             entr.forEach((el) => {
               const buyingDate = new Date(el.created.seconds * 1000);
