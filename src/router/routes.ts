@@ -34,6 +34,24 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: "/add-product",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "AddProduct",
+        component: () => import("pages/Auth/AddProduct.vue"),
+      },
+    ],
+    beforeEnter(to, from, next) {
+      if (user.value && user.value.uid === "xhl8kAFG3wPttsaRWh92qCIGDHQ2") {
+        next();
+      } else {
+        next("/");
+      }
+    },
+  },
+  {
     path: "/my-account",
     component: () => import("layouts/MainLayout.vue"),
     children: [
@@ -69,9 +87,46 @@ const routes: RouteRecordRaw[] = [
         },
         children: [
           {
-            path: "add",
-            name: "AdminDashboardAdd",
-            component: () => import("pages/Auth/AdminDashboardAdd.vue"),
+            path: "",
+            name: "AdminDashboardOrders",
+            component: () => import("pages/Auth/AdminDashboardOrders.vue"),
+            beforeEnter(to, from) {
+              if (
+                user.value === null ||
+                (user.value &&
+                  user.value.uid !== "xhl8kAFG3wPttsaRWh92qCIGDHQ2")
+              ) {
+                return {
+                  path: "/",
+                };
+              } else if (
+                user.value &&
+                user.value.uid === "xhl8kAFG3wPttsaRWh92qCIGDHQ2"
+              ) {
+                return true;
+              }
+            },
+          },
+          {
+            path: "find",
+            name: "AdminDashboardFindProduct",
+            component: () => import("pages/Auth/AdminDashboardFindProduct.vue"),
+            beforeEnter(to, from) {
+              if (
+                user.value === null ||
+                (user.value &&
+                  user.value.uid !== "xhl8kAFG3wPttsaRWh92qCIGDHQ2")
+              ) {
+                return {
+                  path: "/",
+                };
+              } else if (
+                user.value &&
+                user.value.uid === "xhl8kAFG3wPttsaRWh92qCIGDHQ2"
+              ) {
+                return true;
+              }
+            },
           },
         ],
       },

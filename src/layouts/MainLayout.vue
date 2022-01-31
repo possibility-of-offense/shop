@@ -50,6 +50,17 @@
                 <q-item-label>Admin Dashboard</q-item-label>
               </q-item-section>
             </q-btn>
+            &nbsp;
+            <q-btn
+              color="yellow"
+              text-color="black"
+              clickable
+              to="/add-product"
+            >
+              <q-item-section>
+                <q-item-label>Add product</q-item-label>
+              </q-item-section>
+            </q-btn>
           </template>
         </div>
       </q-toolbar>
@@ -64,7 +75,10 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view @close-drawer="handleClosing" />
+      <router-view
+        @close-drawer="handleClosing"
+        @toggle-drawer="toggleDrawer"
+      />
     </q-page-container>
   </q-layout>
 </template>
@@ -92,8 +106,6 @@ export default defineComponent({
   },
 
   setup() {
-    const leftDrawerOpen = vueRef(false);
-
     const router = useRouter();
     const $q = useQuasar();
 
@@ -125,6 +137,11 @@ export default defineComponent({
       });
     };
 
+    const leftDrawerOpen = vueRef(false);
+    const toggleDrawer = function () {
+      leftDrawerOpen.value = true;
+    };
+
     const handleClosing = (val: boolean) => {
       if (val) {
         leftDrawerOpen.value = false;
@@ -144,6 +161,7 @@ export default defineComponent({
       logout,
       error,
       handleClosing,
+      toggleDrawer,
     };
   },
 });

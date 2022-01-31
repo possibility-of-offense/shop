@@ -5,7 +5,9 @@
         class="my-card"
         :class="[doc.data.quantity === 0 ? 'no-stock-card ' : '']"
       >
-        <img
+        <q-img
+          style="height: 250px"
+          ratio="1"
           :src="
             doc.data.imgSrc
               ? doc.data.imgSrc
