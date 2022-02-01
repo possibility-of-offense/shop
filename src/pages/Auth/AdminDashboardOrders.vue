@@ -2,6 +2,7 @@
   <div>
     <q-page padding>
       <h6 class="q-ma-none">
+        <!-- TODO add fallback content -->
         Hello {{ user.displayName }}! Here are the orders:
       </h6>
       <Separator></Separator>

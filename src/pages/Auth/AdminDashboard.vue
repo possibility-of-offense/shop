@@ -61,14 +61,14 @@
                 clickable
                 v-ripple
                 :active="link === 'settings'"
-                @click="link = 'settings'"
+                @click="handleClearMarketing"
                 active-class="my-menu-link"
               >
                 <q-item-section avatar>
                   <q-icon name="settings" />
                 </q-item-section>
 
-                <q-item-section>Settings</q-item-section>
+                <q-item-section>Clear Marketing Collection</q-item-section>
               </q-item>
             </q-list>
           </q-scroll-area>
@@ -83,13 +83,35 @@
 
 <script lang="ts">
 // Vue imports
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+} from "@firebase/firestore";
+import { db } from "src/boot/init";
 import { defineComponent, ref as vueRef } from "vue";
 
 export default defineComponent({
   name: "AdminDashboard",
   setup(_, context) {
+    const link = vueRef("inbox");
+
+    const handleClearMarketing = async () => {
+      try {
+        link.value = "settings";
+        const getDocuments = await getDocs(query(collection(db, "marketing")));
+        getDocuments.docs.forEach(async (d) => {
+          await deleteDoc(doc(db, "marketing", d.id));
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
     return {
       // Quasar components props
+      handleClearMarketing,
       contentStyle: {
         backgroundColor: "#fff",
         color: "#555",
@@ -106,7 +128,7 @@ export default defineComponent({
         width: "5px",
         opacity: 0.75,
       },
-      link: vueRef("inbox"),
+      link,
     };
   },
   beforeRouteEnter(to, from, next) {

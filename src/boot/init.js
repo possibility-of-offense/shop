@@ -4,10 +4,6 @@ import { getFirestore } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-// Vue imports
-import { collection, getDocs } from "@firebase/firestore";
-import { defineComponent, ref as vueRef } from "vue";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCMsW7vFPmzN4aTotnlXT11DPLQ2N598SQ",
   authDomain: "shop-30ed0.firebaseapp.com",
@@ -22,32 +18,13 @@ const db = getFirestore(app);
 const auth = getAuth();
 const storage = getStorage();
 
-const getDocuments = async () => {
-  try {
-    const documents = await getDocs(collection(db, "products"));
-    return documents;
-
-    // documents.docs.forEach((el) => {
-    //   products.value = [
-    //     ...products.value,
-    //     {
-    //       id: el.id,
-    //       ...el.data(),
-    //     },
-    //   ];
-    // });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export default boot(async ({ store }) => {
   // something to do
   await new Promise((resolve) => {
-    const stopObverser = onAuthStateChanged(auth, async (_user) => {
-      const docs = await getDocuments();
-      store.dispatch("products/setProducts", docs);
+    // const docs = await getDocuments();
+    // store.dispatch("products/setProducts", docs);
 
+    const stopObverser = onAuthStateChanged(auth, (_user) => {
       resolve();
       stopObverser();
     });
