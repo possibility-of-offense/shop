@@ -7,6 +7,7 @@ export interface SimpleProduct {
     image?: string;
     quantity?: number;
     imgSrc?: string | null;
+    description?: string | null;
   };
 }
 

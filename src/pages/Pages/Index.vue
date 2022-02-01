@@ -17,6 +17,9 @@
       </template>
       <template v-else>
         <ProductsGrid :docs="docs"></ProductsGrid>
+        <div class="row justify-center q-mt-lg">
+          <Pagination></Pagination>
+        </div>
       </template>
     </template>
   </q-page>
@@ -24,10 +27,19 @@
 
 <script lang="ts">
 // Vue imports
-import { defineComponent, ref as vueRef } from "vue";
+import { defineComponent, ref as vueRef, computed, toRefs, watch } from "vue";
 
 // Firestore imports
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAt,
+} from "firebase/firestore";
 import { db } from "src/boot/init";
 
 // Interfaces imports
@@ -36,27 +48,66 @@ import { SimpleProduct } from "src/components/models";
 // Components imports
 import Separator from "src/components/General/Separator.vue";
 import ProductsGrid from "src/components/Shop/ProductsGrid.vue";
+import Pagination from "src/components/Shop/Pagination.vue";
+
+// Vue-router imports
+import { useRoute } from "vue-router";
+
+// Vuex imports
+import { useStore } from "src/store";
 
 export default defineComponent({
-  components: { ProductsGrid, Separator },
+  components: { ProductsGrid, Pagination, Separator },
   name: "Index",
   setup() {
     const docs = vueRef<Array<SimpleProduct>>([]);
     const isLoading = vueRef<boolean>(false);
+    const route = useRoute();
+    const store = useStore();
+
+    const pageProp = toRefs(route);
+
+    const lastVisibleSnap = computed(() => {
+      const b =
+        store.state.products.products[
+          pageProp.query.value.page
+            ? Number(pageProp.query.value.page) * 2 - 1
+            : 0
+        ];
+      console.log(b);
+
+      return b;
+    });
 
     // LOGIC get documents
     const getDocuments = async (): Promise<void> => {
+      docs.value = [];
       try {
         isLoading.value = true;
-        const querySnapshot = await getDocs(
-          query(
-            collection(db, "products"),
-            limit(10),
-            orderBy("created", "desc")
+
+        const docSnap = await getDoc(
+          doc(
+            db,
+            `products/${
+              store.state.products.products[
+                pageProp.query.value.page
+                  ? Number(pageProp.query.value.page) * 2 - 2
+                  : 0
+              ].id
+            }`
           )
         );
 
-        querySnapshot.forEach((doc): SimpleProduct[] => {
+        const querySnapshot = await getDocs(
+          query(
+            collection(db, "products"),
+            orderBy("created"),
+            limit(2),
+            startAt(docSnap)
+          )
+        );
+
+        querySnapshot.forEach((doc): void => {
           const obj: SimpleProduct = {
             id: doc.id,
             data: {
@@ -67,8 +118,7 @@ export default defineComponent({
               imgSrc: doc.data().url ? doc.data().url : null,
             },
           };
-
-          return (docs.value = [...docs.value, obj]);
+          docs.value.push(obj);
         });
       } catch (err) {
         console.log(err);
@@ -77,9 +127,15 @@ export default defineComponent({
 
     getDocuments();
 
+    watch(pageProp.query, async () => {
+      await getDocuments();
+    });
+
     return {
       docs,
       isLoading,
+      lastVisibleSnap,
+      pageProp,
     };
   },
 });

@@ -39,6 +39,12 @@
         />
         <q-file v-model="img" label="Pick one file" filled />
 
+        <q-editor
+          placeholder="Here comes the description"
+          v-model="description"
+          min-height="5rem"
+        />
+
         <div>
           <q-spinner-cube v-if="showSpinner" color="orange" size="5.5em" />
           <q-btn label="Submit" type="submit" color="primary" />
@@ -84,6 +90,7 @@ export default defineComponent({
     const price = vueRef(null);
     const quantity = vueRef(null);
     const img = vueRef(null);
+    const description = vueRef(null);
 
     context.emit("toggleDrawer", true);
 
@@ -106,6 +113,20 @@ export default defineComponent({
             await updateDoc(added, {
               url: url,
             });
+
+            await addDoc(
+              collection(db, "products", added.id, "additional_info"),
+              {
+                basic: {
+                  name: name.value,
+                  price: price.value,
+                  quantity: quantity.value,
+                  created: serverTimestamp(),
+                  url: url,
+                },
+                description: description.value,
+              }
+            );
 
             showSpinner.value = false;
             router.push("/");
@@ -130,6 +151,7 @@ export default defineComponent({
       quantity,
       img,
       showSpinner,
+      description,
     };
   },
 });
